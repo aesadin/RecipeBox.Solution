@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using ToDoList.Models;
+using RecipeBox.Models;
 using System.Threading.Tasks;
 using RecipeBox.ViewModels;
 
 namespace RecipeBox.Controllers
 {
-  public class AccountController : Controllers
+  public class AccountController : Controller
   {
 
   }

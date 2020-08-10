@@ -1,4 +1,3 @@
-
 namespace RecipeBox.Models
 {
   public class RecipeTag
