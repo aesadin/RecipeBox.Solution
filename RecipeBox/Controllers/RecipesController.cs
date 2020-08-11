@@ -88,6 +88,30 @@ namespace RecipeBox.Controllers
       return RedirectToAction("Index");
     }
 
+    public ActionResult Delete(int id)
+    {
+      Recipe thisRecipe = _db.Recipes.FirstOrDefault(recipes => recipes.RecipeId == id);
+      return View(thisRecipe);
+    }
+
+    [HttpPost, ActionName("Delete")]
+    public ActionResult DeleteConfirmed(int id)
+    {
+      Recipe thisRecipe = _db.Recipes.FirstOrDefault(recipes => recipes.RecipeId == id);
+      _db.Recipes.Remove(thisRecipe);
+      _db.SaveChanges();
+      return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public ActionResult DeleteTag(int joinId)
+    {
+      var joinEntry = _db.RecipeTag.FirstOrDefault(entry => entry.RecipeTagId = joinId);
+      _db.RecipeTag.Remove(joinEntry);
+      _db.SaveChanges();
+      return RedirectToAction("Index");
+    }
+
     public ActionResult AddTag(int id)
     {
       var thisRecipe = _db.Items.FirstOrDefault(items => items.ItemId == id);
