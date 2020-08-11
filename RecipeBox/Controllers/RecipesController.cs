@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RecipeBox.Models;
 
-
 namespace RecipeBox.Controllers
 {
   [Authorize]
@@ -114,9 +113,9 @@ namespace RecipeBox.Controllers
 
     public ActionResult AddTag(int id)
     {
-      var thisRecipe = _db.Items.FirstOrDefault(items => items.ItemId == id);
-      ViewBag.CategoryId = new SelectList(_db.Categories, "CategoryId", "Name");
-      return View(thisItem);
+      var thisRecipe = _db.Recipes.FirstOrDefault(recipes => recipes.RecipeId == id);
+      ViewBag.TagId = new SelectList(_db.Tags, "TagId", "Name");
+      return View(thisRecipe);
     }
 
     [HttpPost]
@@ -130,7 +129,7 @@ namespace RecipeBox.Controllers
       }
       if (TagId != 0)
       {
-      _db.RecipeTag.Add(new RecipeTag() { TagId = TagId, ItemId = recipe.RecipeId });
+      _db.RecipeTag.Add(new RecipeTag() { TagId = TagId, RecipeId = recipe.RecipeId });
       }
       _db.SaveChanges();
       return RedirectToAction("Index");
