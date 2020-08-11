@@ -6,17 +6,20 @@
 
 <h1>Edit recipe</h1>
 <hr/>
-<h4>Edit recipe @Html.
+@Html.DisplayNameFor(model => model.Name): @Html.DisplayFor(model => model.Name)
+<br>
 @using (Html.BeginForm())
 {
+  @Html.HiddenFor(model => model.RecipeId)
   @Html.LabelFor(model => model.Name)
-  @Heml.TextBoxFor(model => model.Name)
+  @Html.EditorFor(model => model.Name)
   <br>
   @Html.LabelFor(model => model.Ingredients)
-  @Heml.TextBoxFor(model => model.Ingredients)
+  @Html.EditorFor(model => model.Ingredients)
   <br>
   @Html.LabelFor(model => model.Instructions)
-  @Heml.TextBoxFor(model => model.Instructions)
+  @Html.EditorFor(model => model.Instructions)
+  <br>
   @Html.Label("Select Tag")
   @Html.DropDownList("TagId")
   <br>

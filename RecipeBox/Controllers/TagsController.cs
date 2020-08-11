@@ -26,14 +26,14 @@ namespace RecipeBox.Controllers
     public async Task<ActionResult> Index()
     {
       var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-      var currentUser = await _userManager.FindByAsync(userId);
+      var currentUser = await _userManager.FindByIdAsync(userId);
       var userTags = _db.Tags.Where(entry => entry.User.Id == currentUser.Id).ToList();
       return View(userTags);
     }
 
     public ActionResult Create()
     {
-      Viewbag.RecipeId = new SelectList(_db.Recipes, "RecipeId", "Name");
+      ViewBag.RecipeId = new SelectList(_db.Recipes, "RecipeId", "Name");
       return View(); 
     }
 
@@ -42,7 +42,7 @@ namespace RecipeBox.Controllers
     {
       var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value; 
       var currentUser = await _userManager.FindByIdAsync(userId); 
-      recipe.User = currentUser;
+      tag.User = currentUser;
       _db.Tags.Add(tag);
       if (RecipeId != 0)
       {
@@ -55,7 +55,7 @@ namespace RecipeBox.Controllers
     public ActionResult Details(int id)
     {
       Tag thisTag = _db.Tags 
-        .Include(tag => tag.Recipe) 
+        .Include(tag => tag.Recipes) 
         .ThenInclude(join => join.Recipe) 
         .FirstOrDefault(tag => tag.TagId == id); 
       return View(thisTag);
@@ -82,7 +82,7 @@ namespace RecipeBox.Controllers
 
     public ActionResult Delete(int id)
     {
-      Recipe thisTag = _db.Tags.FirstOrDefault(tags => tags.TagId == id);
+      Tag thisTag = _db.Tags.FirstOrDefault(tags => tags.TagId == id);
       return View(thisTag);
     }
 
@@ -98,7 +98,7 @@ namespace RecipeBox.Controllers
     [HttpPost]
     public ActionResult DeleteRecipe(int joinId)
     {
-      var joinEntry = _db.RecipeTag.FirstOrDefault(entry => entry.RecipeTagId = joinId);
+      var joinEntry = _db.RecipeTag.FirstOrDefault(entry => entry.RecipeTagId == joinId);
       _db.RecipeTag.Remove(joinEntry);
       _db.SaveChanges();
       return RedirectToAction("Index");

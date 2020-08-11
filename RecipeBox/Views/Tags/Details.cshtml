@@ -1,0 +1,35 @@
+@{
+  Layout = "_Layout";
+}
+
+@model RecipeBox.Models.Tag
+
+<h1>Tag Details</h1>
+<hr/>
+<h3>@Html.DisplayNameFor(model => model.Name): @Html.DisplayFor(model => model.Name)</h3>
+<br>
+@if(@Model.Recipes.Count == 0)
+{
+  <p>This tag has not yet been assigned to a recipe</p>
+}
+else
+{
+  <h4>This tags associated recipe:</h4>
+  <ul>
+  @foreach(var join in Model.Recipes)
+  {
+    <li><p>@join.Recipe.Name</p></li>
+    @using (Html.BeginForm("DeleteRecipe", "Tags"))
+    {
+      @Html.Hidden("joinId", @join.RecipeTagId)
+      <input type="submit" value="Delete"/>
+    }
+  }
+  </ul>
+}
+<br>
+<p>@Html.ActionLink("Edit tag", "Edit", new { id = Model.TagId})</p>
+<p>@Html.ActionLink("Delete tag", "Delete", new { id = Model.TagId })</p>
+<p>@Html.ActionLink("Add tag", "AddTag", new { id = Model.TagId })</p>
+<p>@Html.ActionLink("Back to tags", "Index")</p>
+<p>@Html.ActionLink("Home", "Index", "Home")</p>

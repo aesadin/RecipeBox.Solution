@@ -26,7 +26,7 @@ namespace RecipeBox.Controllers
     public async Task<ActionResult> Index()
     {
       var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-      var currentUser = await _userManager.FindByAsync(userId);
+      var currentUser = await _userManager.FindByIdAsync(userId);
       var userRecipes = _db.Recipes.Where(entry => entry.User.Id == currentUser.Id).ToList();
       return View(userRecipes);
     }
@@ -34,7 +34,7 @@ namespace RecipeBox.Controllers
     
     public ActionResult Create()
     {
-      Viewbag.TagId = new SelectList(_db.Tags, "TagId", "Name");
+      ViewBag.TagId = new SelectList(_db.Tags, "TagId", "Name");
       return View(); 
     }
 
@@ -56,7 +56,7 @@ namespace RecipeBox.Controllers
     public ActionResult Details(int id)
     {
       Recipe thisRecipe = _db.Recipes // defines recipe object including all recipes
-          .Include(recipe => recipe.Tag) // only look at the tags part of the recipe object
+          .Include(recipe => recipe.Tags) // only look at the tags part of the recipe object
           .ThenInclude(join => join.Tag) // only look for the tag portion of recipetag table
           .FirstOrDefault(recipe => recipe.RecipeId == id); // grab the first recipe Id that matches the int Id we passed as argument, if there is no Id then return null
       return View(thisRecipe);
@@ -105,7 +105,7 @@ namespace RecipeBox.Controllers
     [HttpPost]
     public ActionResult DeleteTag(int joinId)
     {
-      var joinEntry = _db.RecipeTag.FirstOrDefault(entry => entry.RecipeTagId = joinId);
+      var joinEntry = _db.RecipeTag.FirstOrDefault(entry => entry.RecipeTagId == joinId);
       _db.RecipeTag.Remove(joinEntry);
       _db.SaveChanges();
       return RedirectToAction("Index");

@@ -1,0 +1,27 @@
+@{
+  Layout = "_Layout";
+}
+
+@using RecipeBox.Models;
+@using RecipeBox.ViewModels;
+@using System.Security.Claims
+@model IEnumerable<RecipeBox.Models.Tag>
+
+<h1>@RegisterViewModel.Name's Tags</h1>
+<hr/>
+@if(Model.Any())
+{
+  <ul>
+  @foreach(Tag tag in Model)
+  {
+    <li><p>@Html.ActionLink($"{tag.Name}", "Details", new { id = tag.TagId})</p></li>
+  }
+  </ul>
+}
+else
+{
+  <p>No tags have been added yet!</p>
+}
+<br>
+<p>@Html.ActionLink("Add new tag", "Create")</p>
+<p>@Html.ActionLink("Home", "Index", "Home")</p>

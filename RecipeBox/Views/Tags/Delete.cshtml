@@ -1,0 +1,16 @@
+@{
+  Layout = "_Layout";
+}
+
+@model RecipeBox.Models.Tag
+
+<h2>Delete tag:</h2>
+<hr/>
+@Html.DisplayNameFor(model => model.Name): @Html.DisplayFor(model => model.Name)
+@using (Html.BeginForm())
+{
+    <input type="submit" value="Delete" />
+}
+<br>
+<p>@Html.ActionLink("Back to tags", "Index")</p>
+<p>@Html.ActionLink("Home", "Index", "Home")</p>
