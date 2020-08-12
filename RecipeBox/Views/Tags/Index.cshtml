@@ -7,7 +7,7 @@
 @using System.Security.Claims
 @model IEnumerable<RecipeBox.Models.Tag>
 
-<h1>@RegisterViewModel.Name's Tags</h1>
+<h1>@User.Identity.Name's Tags</h1>
 <hr/>
 @if(Model.Any())
 {

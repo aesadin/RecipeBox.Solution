@@ -11,7 +11,6 @@ using RecipeBox.Models;
 
 namespace RecipeBox.Controllers
 {
-  [Authorize]
   public class RecipesController : Controller
   {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -23,18 +22,18 @@ namespace RecipeBox.Controllers
       _db = db;
     }
 
-    public async Task<ActionResult> Index()
+    public ActionResult Index()
     {
-      var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-      var currentUser = await _userManager.FindByIdAsync(userId);
-      var userRecipes = _db.Recipes.Where(entry => entry.User.Id == currentUser.Id).ToList();
+      List<Recipe> userRecipes = _db.Recipes.ToList();
       return View(userRecipes);
     }
 
-    
+    [Authorize]
     public ActionResult Create()
     {
-      ViewBag.TagId = new SelectList(_db.Tags, "TagId", "Name");
+      var thisUsersTags = _db.Tags
+        .Include(tag => tag.User);
+      ViewBag.TagId = new SelectList(thisUsersTags, "TagId", "Name");
       return View(); 
     }
 
@@ -59,12 +58,21 @@ namespace RecipeBox.Controllers
           .Include(recipe => recipe.Tags) // only look at the tags part of the recipe object
           .ThenInclude(join => join.Tag) // only look for the tag portion of recipetag table
           .FirstOrDefault(recipe => recipe.RecipeId == id); // grab the first recipe Id that matches the int Id we passed as argument, if there is no Id then return null
+      var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      ViewBag.IsCurrentUser = userId != null ? userId == thisRecipe.User.Id : false;    
       return View(thisRecipe);
     }
 
-    public ActionResult Edit(int id)
+    [Authorize]
+    public async Task<ActionResult> Edit(int id)
     {
-      var thisRecipe = _db.Recipes.FirstOrDefault(recipes => recipes.RecipeId == id);
+      var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      var currentUser = await _userManager.FindByIdAsync(userId);
+      var thisRecipe = _db.Recipes.Where(entry => entry.User.Id == currentUser.Id).FirstOrDefault(recipes => recipes.RecipeId == id);
+      if (thisRecipe == null)
+      {
+        return RedirectToAction("Details", new {id = id});
+      }
       ViewBag.TagId = new SelectList(_db.Tags, "TagId", "Name"); // thing that comes after ViewBag. is the name of your viewbag. Selectlist object takes 3 arguments: all the data that you want included, what value you want this clickable 'Name' to have, what you want displayed to user
       return View(thisRecipe);
     }
@@ -87,9 +95,17 @@ namespace RecipeBox.Controllers
       return RedirectToAction("Index");
     }
 
-    public ActionResult Delete(int id)
+    [Authorize]
+    public async Task<ActionResult> Delete(int id)
     {
-      Recipe thisRecipe = _db.Recipes.FirstOrDefault(recipes => recipes.RecipeId == id);
+      var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      var currentUser = await _userManager.FindByIdAsync(userId);
+      
+      Recipe thisRecipe = _db.Recipes.Where(entry => entry.User.Id == currentUser.Id).FirstOrDefault(recipes => recipes.RecipeId == id);
+      if (thisRecipe == null)
+      {
+        return RedirectToAction("Details", new {id = id});
+      }
       return View(thisRecipe);
     }
 
@@ -111,9 +127,16 @@ namespace RecipeBox.Controllers
       return RedirectToAction("Index");
     }
 
-    public ActionResult AddTag(int id)
+    [Authorize]
+    public async Task<ActionResult> AddTag(int id)
     {
-      var thisRecipe = _db.Recipes.FirstOrDefault(recipes => recipes.RecipeId == id);
+      var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      var currentUser = await _userManager.FindByIdAsync(userId);
+      var thisRecipe = _db.Recipes.Where(entry => entry.User.Id == currentUser.Id).FirstOrDefault(recipes => recipes.RecipeId == id);
+      if (thisRecipe == null)
+      {
+        return RedirectToAction("Details", new {id = id});
+      }
       ViewBag.TagId = new SelectList(_db.Tags, "TagId", "Name");
       return View(thisRecipe);
     }
