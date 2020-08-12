@@ -33,7 +33,9 @@ namespace RecipeBox.Controllers
 
     public ActionResult Create()
     {
-      ViewBag.RecipeId = new SelectList(_db.Recipes, "RecipeId", "Name");
+      var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      var thisUsersRecipes = _db.Recipes.Where(entry => entry.User.Id == userId);
+      ViewBag.RecipeId = new SelectList(thisUsersRecipes, "RecipeId", "Name");
       return View(); 
     }
 
