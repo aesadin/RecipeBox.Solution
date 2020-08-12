@@ -150,7 +150,6 @@ namespace RecipeBox.Controllers
     public ActionResult AddTag(Recipe recipe, int TagId)
     {
       var existingConnection = _db.RecipeTag.FirstOrDefault(join => join.RecipeId == recipe.RecipeId && join.TagId == TagId);
-
       if (existingConnection != null)
       {
         return RedirectToAction("Details", new {id = recipe.RecipeId});
@@ -161,6 +160,24 @@ namespace RecipeBox.Controllers
       }
       _db.SaveChanges();
       return RedirectToAction("Index");
+    }
+
+    public ActionResult AddIngredient(int id)
+    {
+      
+      Recipe thisRecipe = _db.Recipes.FirstOrDefault(recipes => recipes.RecipeId == id);
+      ViewBag.Ingredients = _db.Ingredients;
+      return View(thisRecipe);
+    }
+
+    [HttpPost]
+    public ActionResult AddIngredient(Recipe recipe, int IngredientId)
+    {
+      Recipe thisRecipe = _db.Recipes.FirstOrDefault(recipes => recipes.RecipeId == recipe.RecipeId);
+      Ingredient thisIngredient = _db.Ingredients.FirstOrDefault(ingredients => ingredients.IngredientId == IngredientId);
+      thisRecipe.Ingredients.Add(thisIngredient);
+      _db.SaveChanges();
+      return View();
     }
   }
 }

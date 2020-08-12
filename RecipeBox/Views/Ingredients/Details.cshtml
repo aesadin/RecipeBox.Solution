@@ -1,0 +1,22 @@
+@*@{
+  Layout = "_Layout";
+}
+
+@using RecipeBox.Models;
+@model RecipeBox.Models.Ingredient;
+
+<h2>Indgredient Details</h2>
+<hr />
+<h3>Name: @Html.DisplayFor(model => model.IngredientName)</h3>
+
+<h3> Recipes:</h3>
+<ul>
+  @foreach(RecipeTag join in Model.Recipe)
+  {
+    @if (join.RecipeId != null)
+    {
+      <li>@Html.ActionLink($"{join.Recipe.Name}", "Details", "Recipes", new { id = @join.RecipeId })</li>
+    }
+  }
+</ul>
+*@

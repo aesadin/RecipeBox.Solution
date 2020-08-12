@@ -1,0 +1,26 @@
+@{
+  Layout = "_Layout";
+}
+
+@using RecipeBox.Models;
+@model IEnumerable<RecipeBox.Models.Ingredient>;
+
+<h1>See all ingredients Ingredients</h1>
+<hr/>
+@* @if (Model.Count() == 0)
+{
+  <h3>No ingredients have been added yet</h3>
+}
+else
+{ *@
+  @foreach(Ingredient ingredient in Model)
+  {
+    <li><p>@Html.ActionLink($"{ingredient.IngredientName}", "Details", new { id = ingredient.IngredientId})</p></li>
+  }
+
+<br>
+<p>@Html.ActionLink("Add ingredient", "Create")</p>
+<p>@Html.ActionLink("See all tags", "Index", "Tags")</p>
+<p>@Html.ActionLink("See all recipes", "Index", "Recipes")</p>
+<p>@Html.ActionLink("See all ingredients", "Index", "Ingredients")</p>
+<p>@Html.ActionLink("Create an account", "Index", "Account")</p>

@@ -9,5 +9,22 @@ namespace RecipeBox.Controllers
     {
       return View();
     }
+
+    [HttpPost]
+    public ActionResult Index(string searchOption, string searchString)
+    {
+      if (searchOption == "ingredients")
+      {
+        return RedirectToAction("Index", "Ingredients", new {name = searchString});
+      }
+      else if (searchOption == "tags")
+      {
+        return RedirectToAction("Index", "Tags", new {name = searchString});
+      }
+      else
+      {
+        return RedirectToAction("Index", "Recipes", new {name = searchString});
+      }
+    }
   }
 }
