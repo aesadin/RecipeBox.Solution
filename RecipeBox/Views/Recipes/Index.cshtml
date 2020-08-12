@@ -22,5 +22,8 @@ else
   <p>No recipes have been added yet!</p>
 }
 <br>
-<p>@Html.ActionLink("Add new recipe", "Create")</p>
+@if (User.Identity.IsAuthenticated)
+{
+  <p>@Html.ActionLink("Add new recipe", "Create")</p>
+}
 <p>@Html.ActionLink("Home", "Index", "Home")</p>

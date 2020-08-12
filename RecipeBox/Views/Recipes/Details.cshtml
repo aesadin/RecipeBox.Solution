@@ -2,6 +2,7 @@
   Layout = "_Layout";
 }
 
+@using System.Security.Claims
 @model RecipeBox.Models.Recipe
 
 <h1>Recipe Details</h1>
@@ -23,17 +24,24 @@ else
   @foreach(var join in Model.Tags)
   {
     <li><p>@join.Tag.Name</p></li>
-    @using (Html.BeginForm("DeleteTag", "Recipes"))
+    @if (User.Identity.IsAuthenticated && ViewBag.IsCurrentUser)
     {
-      @Html.Hidden("joinId", @join.RecipeTagId)
-      <input type="submit" value="Delete"/>
-    }
+      @using (Html.BeginForm("DeleteTag", "Recipes"))
+      {
+        @Html.Hidden("joinId", @join.RecipeTagId)
+        <input type="submit" value="Delete"/>
+      }
+    }  
   }
   </ul>
 }
 <br>
-<p>@Html.ActionLink("Edit recipe", "Edit", new { id = Model.RecipeId})</p>
-<p>@Html.ActionLink("Delete recipe", "Delete", new { id = Model.RecipeId })</p>
-<p>@Html.ActionLink("Add tag", "AddTag", new { id = Model.RecipeId })</p>
 <p>@Html.ActionLink("Back to recipes", "Index")</p>
 <p>@Html.ActionLink("Home", "Index", "Home")</p>
+
+@if (User.Identity.IsAuthenticated && ViewBag.IsCurrentUser)
+{
+  <p>@Html.ActionLink("Edit recipe", "Edit", new { id = Model.RecipeId})</p>
+  <p>@Html.ActionLink("Delete recipe", "Delete", new { id = Model.RecipeId })</p>
+  <p>@Html.ActionLink("Add tag", "AddTag", new { id = Model.RecipeId })</p>
+}  
