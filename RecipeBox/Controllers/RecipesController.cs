@@ -22,17 +22,18 @@ namespace RecipeBox.Controllers
       _db = db;
     }
 
+    [Authorize]
     public ActionResult Index()
     {
-      List<Recipe> userRecipes = _db.Recipes.ToList();
+      List<Recipe> userRecipes = _db.Recipes.ToList(); 
       return View(userRecipes);
     }
 
     [Authorize]
     public ActionResult Create()
     {
-      var thisUsersTags = _db.Tags
-        .Include(tag => tag.User);
+      var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      var thisUsersTags = _db.Tags.Where(entry => entry.User.Id == userId);
       ViewBag.TagId = new SelectList(thisUsersTags, "TagId", "Name");
       return View(); 
     }
@@ -52,11 +53,13 @@ namespace RecipeBox.Controllers
       return RedirectToAction("Index");
     }
 
+    [Authorize]
     public ActionResult Details(int id)
     {
       Recipe thisRecipe = _db.Recipes // defines recipe object including all recipes
           .Include(recipe => recipe.Tags) // only look at the tags part of the recipe object
           .ThenInclude(join => join.Tag) // only look for the tag portion of recipetag table
+          .Include(recipe => recipe.User)
           .FirstOrDefault(recipe => recipe.RecipeId == id); // grab the first recipe Id that matches the int Id we passed as argument, if there is no Id then return null
       var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
       ViewBag.IsCurrentUser = userId != null ? userId == thisRecipe.User.Id : false;    
